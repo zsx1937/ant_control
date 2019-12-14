@@ -1,0 +1,19 @@
+{
+  "send_exe_path": "H:/pychram_wprkspace/256classify/dist/hello.exe",
+  "send_exe_paras": {
+      "commands_path": "commands.txt",
+      "results_path": "results.txt",
+      "host_ip" : "192.168.10.200",
+      "host_port" : "4001"
+    },
+  "process_exe_path": "notepad",
+  "process_exe_paras": {
+      "para1": "1.txt",
+      "para2": "para2"
+    },
+  "display_exe_path": "5",
+  "display_exe_paras": {
+      "results_path": "results.txt",
+      "para2": "6"
+    }
+}
