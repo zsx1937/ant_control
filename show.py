@@ -13,16 +13,19 @@ import json
 ###############################################################################
 config = json.load(open("config.json"))
 
+
 def writefile(path, content):
     f = open(path, 'w')
     f.write(content)
     f.close()
+
 
 def readfile(path):
     f = open(path, 'r')
     c = f.read()
     f.close()
     return c
+
 
 # 1 -> [1000000] , 2-> [01000000] , 254 -> [0111111]
 def dec2bin(num):
@@ -32,6 +35,7 @@ def dec2bin(num):
         num = int(num / 2)
     return res
 
+
 def bin2dec(bin_list):
     res = 0
     for i in range(8):
@@ -39,17 +43,19 @@ def bin2dec(bin_list):
     return res
 
 
-def ij2id(i,j):
-    l = [0,1,2,3,-1,4,5,6,7]
-    return l[i*3 + j]
+def ij2id(i, j):
+    l = [0, 1, 2, 3, -1, 4, 5, 6, 7]
+    return l[i * 3 + j]
+
 
 # id              num
 # 0  1  2         3  2  1
 # 3     4   ->    4     8
 # 6  7  8         5  6  7
 def id2num(id):
-    l = [3,2,1,4,8,5,6,7]
+    l = [3, 2, 1, 4, 8, 5, 6, 7]
     return l[id]
+
 
 ###############################################################################
 # Function connected to windows
@@ -57,7 +63,7 @@ def id2num(id):
 # Send Button
 def send():
     # count status of checkbuttons
-    status = [0,0,0,0,0,0,0,0]
+    status = [0, 0, 0, 0, 0, 0, 0, 0]
 
     # for i in range(3):
     #     for j in range(3):
@@ -67,10 +73,10 @@ def send():
     #         if (varbuttons[num].get() == 1):
     #             status[num] = 1
 
-    for id in range (8):
+    for id in range(8):
         num = id2num(id)
         if (varbuttons[id].get() == 1):
-            status[num-1] = 1
+            status[num - 1] = 1
 
     # read json
     exe_path = config['send_exe_path']
@@ -78,10 +84,10 @@ def send():
     results_path = config['send_exe_paras']['results_path']
     host_ip = config['send_exe_paras']['host_ip']
     host_port = config['send_exe_paras']['host_port']
-    paras = [commands_path,results_path,host_ip,host_port]
+    paras = [commands_path, results_path, host_ip, host_port]
 
     # write para to commands.txt
-    content="s " + str(bin2dec(status))
+    content = "s " + str(bin2dec(status))
     writefile(commands_path, content)
 
     # call cmd
@@ -95,20 +101,22 @@ def send():
         else:
             print("send fail!")
             var_tips.set("send fail!")
-        #print(out)
+        # print(out)
     else:
         print("send exe file not exist!")
         var_tips.set("send exe file not exist!")
 
 
 # Process Button
-process_path="notepad"
+process_path = "notepad"
+
+
 def process():
     # read json
     exe_path = config['process_exe_path']
     para1 = config['process_exe_paras']['para1']
     paras = [para1]
-    #if os.path.exists(process_path):
+    # if os.path.exists(process_path):
     if 1:
         command = exe_path
         for para in paras:
@@ -118,6 +126,7 @@ def process():
         print('*' * 10)
         print(out)
     var_tips.set("process success")
+
 
 # Display Button
 def display():
@@ -129,7 +138,7 @@ def display():
 
     for id in range(8):
         num = id2num(id)
-        if status[num-1] == 1 :
+        if status[num - 1] == 1:
             var_strings[id].set("1")
         else:
             var_strings[id].set("0")
@@ -144,9 +153,8 @@ def display():
     #             var_strings[num].set("0")
     var_tips.set("display success")
 
+
 ###############################################################################
-
-
 
 
 ###############################################################################
@@ -157,7 +165,6 @@ window.title('SuperView')
 window.geometry('800x500')  # 这里的乘是小x
 window['bg'] = 'black'
 
-
 ###############################################################################
 # 8 Checkbuttons
 ###############################################################################
@@ -166,7 +173,7 @@ start_x = 50
 start_y = 50
 step = 100
 varbuttons = []
-#cbuttons = []
+# cbuttons = []
 
 # Generate 8 checkbutton
 # ----------------> x
@@ -175,16 +182,17 @@ varbuttons = []
 # y
 for i in range(3):
     for j in range(3):
-        if (i==1 and j==1):
+        if (i == 1 and j == 1):
             continue
-        id = ij2id(i,j)
+        id = ij2id(i, j)
         num = id2num(id)
         x = start_x + step * j
         y = start_y + step * i
         varnum = tk.IntVar()
         varbuttons.append(varnum)
-        cnum = tk.Checkbutton(window, text="ANT" + str(num),variable=varnum, onvalue=1, offvalue=0).place(x=x, y=y, anchor='nw')
-        #cbuttons.append(cnum)
+        cnum = tk.Checkbutton(window, text="ANT" + str(num), variable=varnum, onvalue=1, offvalue=0).place(x=x, y=y,
+                                                                                                           anchor='nw')
+        # cbuttons.append(cnum)
 
 ###############################################################################
 # 8 Display Text
@@ -198,15 +206,17 @@ var_strings = []
 # Generate display text
 for i in range(3):
     for j in range(3):
-        if (i==1 and j==1):
+        if (i == 1 and j == 1):
             continue
-        id = ij2id(i,j)
+        id = ij2id(i, j)
         num = id2num(id)
         x = start_dx + stepd * j
         y = start_dy + stepd * i
         varnum = tk.StringVar()
         var_strings.append(varnum)
-        tk.Label(window, textvariable=varnum, bg='green', fg='white', font=('Arial', 12), width=4, height=2).place(x=x,y=y,anchor='nw')
+        tk.Label(window, textvariable=varnum, bg='green', fg='white', font=('Arial', 12), width=4, height=2).place(x=x,
+                                                                                                                   y=y,
+                                                                                                                   anchor='nw')
 
 ###############################################################################
 # 3 buttons
@@ -216,9 +226,12 @@ start_bx = 50
 start_by = 350
 step_bx = 100
 
-b_send = tk.Button(window, text='Send', font=('Arial', 12), width=10, height=1, command=send).place(x=start_bx + step_bx * 0, y=start_by, anchor='nw')
-b_process = tk.Button(window, text='Process', font=('Arial', 12), width=10, height=1, command=process).place(x=start_bx + step_bx * 1, y=start_by, anchor='nw')
-b_display = tk.Button(window, text='Display', font=('Arial', 12), width=10, height=1, command=display).place(x=start_bx + step_bx * 2, y=start_by, anchor='nw')
+b_send = tk.Button(window, text='Send', font=('Arial', 12), width=10, height=1, command=send).place(
+    x=start_bx + step_bx * 0, y=start_by, anchor='nw')
+b_process = tk.Button(window, text='Process', font=('Arial', 12), width=10, height=1, command=process).place(
+    x=start_bx + step_bx * 1, y=start_by, anchor='nw')
+b_display = tk.Button(window, text='Display', font=('Arial', 12), width=10, height=1, command=display).place(
+    x=start_bx + step_bx * 2, y=start_by, anchor='nw')
 
 ###############################################################################
 # Tips Text
@@ -226,9 +239,10 @@ b_display = tk.Button(window, text='Display', font=('Arial', 12), width=10, heig
 x_tips = 50
 y_tips = 400
 var_tips = tk.StringVar()
-tk.Label(window, text="Tips: ",bg='grey', fg='black', font=('Arial', 12), width=5, height=1).place(x=x_tips, y=y_tips,anchor='nw')
-tk.Label(window, textvariable=var_tips, bg='grey', fg='black', font=('Arial', 12), width=70, height=1,anchor='w').place(x=x_tips+50, y=y_tips,anchor='nw')
-
+tk.Label(window, text="Tips: ", bg='grey', fg='black', font=('Arial', 12), width=5, height=1).place(x=x_tips, y=y_tips,
+                                                                                                    anchor='nw')
+tk.Label(window, textvariable=var_tips, bg='grey', fg='black', font=('Arial', 12), width=70, height=1,
+         anchor='w').place(x=x_tips + 50, y=y_tips, anchor='nw')
 
 ###############################################################################
 # Windows loop
