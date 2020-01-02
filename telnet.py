@@ -23,9 +23,9 @@ def close_telnet(tn):
 def read_files(path):
     f = open(path, 'r', encoding='utf-8')
     if f:
-        print("read files success")
+        print("Read files success")
     else:
-        print("read files fail")
+        print("Read files fail")
     content = f.read()
     commands = content.split('\n')
     f.close()
@@ -37,7 +37,7 @@ def write_files(path, results):
     for result in results:
         f.write(str(result) + '\n')
     f.close()
-    print("write files success")
+    print("Write files success")
 
 
 # process single command,for example, RS 1 1
@@ -121,27 +121,29 @@ def process_advance(tn, commands):
     results = []
     for command in commands:
         l = len(command)
+        #print (command)
+        #print(l)
         if l == 0:
             continue
-        # set one port, for example, SS 1 1
-        elif (l == 6 and command[0:2].lower == 'ss'):
-            command = "SS" + command[2:] + '\n'
+        # set one port, for example, o 1 1
+        elif (l >= 5 and command[0].lower() == 'o'):
+            command = "SS" + command[1:] + '\n'
             result = process_command(tn, command)
             if (result == " Fail"):
-                print("set fail")
+                print("Set fail")
             else:
-                print("set success")
+                print("Set success")
         # pause for n seconds, for example, P 3
         elif (l >= 3 and command[0].lower() == 'p'):
             t = int(command[2:])
-            print("sleep " + t + 's')
+            print("Sleep " + str(t) + 's')
             time.sleep(t)
         # set all ports, for example, S 127(01111111)
         elif (l >= 3 and command[0].lower() == 's'):
             num = int(command[2:])
             states = dec2bin(num)
             if (set_all_ports(tn, states) == 0):
-                print("set fail")
+                print("Set fail")
             else:
                 results.append(num)
         # query all ports, for example, Q
@@ -150,10 +152,10 @@ def process_advance(tn, commands):
             if resq > -1:
                 results.append(resq)
             else:
-                print("query all fail")
+                print("Query all fail")
         # others
         else:
-            print("command not exist")
+            print("Command not exist")
     return results
 
 
@@ -177,4 +179,4 @@ if __name__ == '__main__':
     if len(argv) == 4:
         main(argv[0], argv[1], argv[2], argv[3])
     else:
-        main(commands_path, results_path, host, port)
+        main(commands_path, results_path, host_ip, host_port)

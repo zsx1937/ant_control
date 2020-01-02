@@ -15,5 +15,24 @@
   "display_exe_paras": {
       "results_path": "results.txt",
       "para2": "6"
-    }
+    },
+  "display_img_path":"satomi.jpg",
+  "illustration_path":"illustration.txt",
+  "background_color":"black",
+  "title_bg":"grey",
+  "title_fg":"lightpink",
+  "distribute_title_bg":"grey",
+  "distribute_title_fg":"black",
+  "discribe_bg":"grey",
+  "discribe_fg":"black",
+  "result_bg0":"grey",
+  "result_bg1":"green",
+  "result_fg":"white",
+  "button_bg0":"grey",
+  "button_bg1":"green",
+  "tips_bg":"grey",
+  "tips_fg":"black",
+  "copyright_fg":"white",
+  "min_distance_fg":"yellow"
+
 }
