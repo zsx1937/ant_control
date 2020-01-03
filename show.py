@@ -8,6 +8,7 @@ from PIL import Image,ImageTk
 import subprocess
 import os
 import json
+from win32com.client import Dispatch
 
 ###############################################################################
 # Logic process & function define
@@ -60,18 +61,24 @@ def bin2dec(bin_list):
     return res
 
 
+ids = [0,1,2,3,-1,-1,4,5,6]
+nums = [3,2,1,4,5,6,7]
 def ij2id(i, j):
-    l = [0, 1, 2, 3, -1, 4, 5, 6, 7]
-    return l[i * 3 + j]
+    #l = [0, 1, 2, 3, -1, 4, 5, 6, 7]
+    global ids
+    return ids[i * 3 + j]
 
 
-# id              num
-# 0  1  2         3  2  1
-# 3     4   ->    4     8
-# 6  7  8         5  6  7
+# i*3+j           id              num
+# 0  1  2         0  1  2         3  2  1
+# 3  4  5   ->    3         ->    4      
+# 6  7  8         4  5  6         5  6  7
+
+
 def id2num(id):
-    l = [3, 2, 1, 4, 8, 5, 6, 7]
-    return l[id]
+    #l = [3, 2, 1, 4, 8, 5, 6, 7]
+    global nums
+    return nums[id]
 
 
 ###############################################################################
@@ -90,7 +97,7 @@ def send():
     #         if (varbuttons[num].get() == 1):
     #             status[num] = 1
 
-    for id in range(8):
+    for id in range(len(nums)):
         num = id2num(id)
         if (varbuttons[id].get() == 1):
             status[num - 1] = 1
@@ -114,42 +121,45 @@ def send():
             commands = commands + " " + para
         rc, out = subprocess.getstatusoutput(commands)
         if (rc == 0):
-            var_tips.set("send success")
+            var_tips.set("Send success!")
         else:
-            print("send fail!")
-            var_tips.set("send fail!")
-        # print(out)
+            print("Send fail!")
+            var_tips.set("Send fail!")
+        print(out)
     else:
-        print("send exe file not exist!")
-        var_tips.set("send exe file not exist!")
+        print("Send exe file not exist!")
+        var_tips.set("Send exe file not exist!")
 
 
 # Process Button
-process_path = "notepad"
-
-
 def process():
     # read json
     exe_path = config['process_exe_path']
-    para1 = config['process_exe_paras']['para1']
-    paras = [para1]
-    # if os.path.exists(process_path):
-    if 1:
+    #paras = []
+    if os.path.exists(exe_path):
+    #if 1:
         command = exe_path
-        for para in paras:
-            command = command + " " + para
+        #for para in paras:
+        #    command = command + " " + para
         rc, out = subprocess.getstatusoutput(command)
-        print(rc)
-        print('*' * 10)
-        print(out)
-    var_tips.set("process success")
+        if (rc == 0):
+            var_tips.set("Process success!")
+        else:
+            print("Process fail!")
+            var_tips.set("Process fail!")
+        #print(rc)
+        #print('*' * 10)
+        #print(out)
+    else:
+        print("Process exe file not exist!")
+        var_tips.set("Process exe file not exist!")
+    
 
 
 # Display Button
 def display():
     # read json
-    exe_path = config['display_exe_path']
-    results_path = config['display_exe_paras']['results_path']
+    results_path = config['display_result_path']
     c = readfile(results_path)
     status = dec2bin(int(c))
 
@@ -162,7 +172,7 @@ def display():
     label_display.configure(image = display_img,width=img_width,height=img_height)
 
     #text_display.
-    for id in range(8):
+    for id in range(len(nums)):
         num = id2num(id)
         if status[num - 1] == 1:
             #var_strings[id].set("1")
@@ -179,9 +189,22 @@ def display():
     #             var_strings[num].set("1")
     #         else:
     #             var_strings[num].set("0")
-    var_tips.set("display success")
+    var_tips.set("display success!")
 
+# M-matrix button
 
+def mmatrix():
+    # need to use the third library win32com.client
+    file_path = config["mmatrix_file_path"]
+    if os.path.exists(file_path):
+        xlApp = Dispatch('EXCEL.Application')
+        xlApp.Visible = True
+        xlApp.Workbooks.Open(file_path)
+        var_tips.set("M-matrix success!")
+    else:
+        print("Mmatrix file not exist!")
+        var_tips.set("Mmatrix file not exist!")
+    
 ###############################################################################
 
 
@@ -196,8 +219,8 @@ window['bg'] = config['background_color']
 ###############################################################################
 # Title
 ###############################################################################
-x_title = 200
-y_title = 0
+x_title = 250
+y_title = 30
 tk.Label(window, text="上海交通大学超孔径项目", bg=config['title_bg'], fg=config['title_fg'], font=("SimHei", 24, "bold"), width=40, height=2).place(x=x_title, y=y_title,anchor='nw')
 
 ###############################################################################
@@ -206,8 +229,8 @@ tk.Label(window, text="上海交通大学超孔径项目", bg=config['title_bg']
 x_distribute = 50
 y_distribute = 150
 tk.Label(window, text="发射区", bg=config["distribute_title_bg"], fg=config["distribute_title_fg"], font=('Arial', 12), width=26, height=1).place(x=x_distribute, y=y_distribute,anchor='nw')
-tk.Label(window, text="结果区", bg=config["distribute_title_bg"], fg=config["distribute_title_fg"], font=('Arial', 12), width=26, height=1).place(x=x_distribute+350, y=y_distribute,anchor='nw')
-tk.Label(window, text="展示区", bg=config["distribute_title_bg"], fg=config["distribute_title_fg"], font=('Arial', 12), width=30, height=1).place(x=x_distribute+740, y=y_distribute,anchor='nw')
+tk.Label(window, text="判别结果", bg=config["distribute_title_bg"], fg=config["distribute_title_fg"], font=('Arial', 12), width=26, height=1).place(x=x_distribute+350, y=y_distribute,anchor='nw')
+tk.Label(window, text="采样值", bg=config["distribute_title_bg"], fg=config["distribute_title_fg"], font=('Arial', 12), width=30, height=1).place(x=x_distribute+740, y=y_distribute,anchor='nw')
 
 
 ###############################################################################
@@ -227,9 +250,9 @@ varbuttons = []
 # y
 for i in range(3):
     for j in range(3):
-        if (i == 1 and j == 1):
-            continue
         id = ij2id(i, j)
+        if id == -1:
+            continue
         num = id2num(id)
         x = start_x + step * j
         y = start_y + step * i
@@ -263,9 +286,9 @@ dlabels = []
 # Generate display text
 for i in range(3):
     for j in range(3):
-        if (i == 1 and j == 1):
-            continue
         id = ij2id(i, j)
+        if id == -1:
+            continue
         num = id2num(id)
         x = start_dx + stepd * j
         y = start_dy + stepd * i
@@ -301,7 +324,7 @@ text_discribe.config(state=tk.DISABLED)
 
 
 ###############################################################################
-# 3 buttons
+# 4 buttons
 ###############################################################################
 # Position
 start_bx = 50
@@ -311,7 +334,8 @@ step_bx = 100
 b_send = tk.Button(window, text='Send', font=('Arial', 12), width=10, height=1, command=send).place(x=start_bx + step_bx * 0, y=start_by, anchor='nw')
 b_process = tk.Button(window, text='Process', font=('Arial', 12), width=10, height=1, command=process).place(x=start_bx + step_bx * 1, y=start_by, anchor='nw')
 b_display = tk.Button(window, text='Display', font=('Arial', 12), width=10, height=1, command=display).place(x=start_bx + step_bx * 2, y=start_by, anchor='nw')
-
+b_mmatrix = tk.Button(window, text='M-matrix', font=('Arial', 12), width=10, height=1, command=mmatrix).place(x=start_bx + step_bx * 3, y=start_by, anchor='nw')
+b_quit = tk.Button(window, text='Quit', font=('Arial', 12), width=10, height=1, command=exit).place(x=start_bx + step_bx * 4, y=start_by, anchor='nw')
 ###############################################################################
 # Tips Text
 ###############################################################################

@@ -1,38 +1,36 @@
 {
-  "send_exe_path": "H:/pychram_wprkspace/256classify/dist/hello.exe",
+  "send_exe_path": "C:/Users/kaixi/Desktop/super/256classify/dist/telnet/telnet.exe",
   "send_exe_paras": {
       "commands_path": "commands.txt",
       "results_path": "results.txt",
       "host_ip" : "192.168.10.200",
       "host_port" : "4001"
     },
+
   "process_exe_path": "notepad",
-  "process_exe_paras": {
-      "para1": "1.txt",
-      "para2": "para2"
-    },
-  "display_exe_path": "5",
-  "display_exe_paras": {
-      "results_path": "results.txt",
-      "para2": "6"
-    },
+
+  "display_result_path":"results.txt",
   "display_img_path":"satomi.jpg",
+
+  "mmatrix_file_path":"C:/Users/kaixi/Desktop/ant_control/demo.xml",
+  
   "illustration_path":"illustration.txt",
-  "background_color":"black",
-  "title_bg":"grey",
-  "title_fg":"lightpink",
-  "distribute_title_bg":"grey",
+
+  "background_color":"#d8e9ec",
+  "title_bg":"#d8e9ec",
+  "title_fg":"blue",
+  "distribute_title_bg":"#ffd47b",
   "distribute_title_fg":"black",
-  "discribe_bg":"grey",
+  "discribe_bg":"#c0c0c0",
   "discribe_fg":"black",
-  "result_bg0":"grey",
+  "result_bg0":"#a0a0a0",
   "result_bg1":"green",
   "result_fg":"white",
-  "button_bg0":"grey",
+  "button_bg0":"#c0c0c0",
   "button_bg1":"green",
-  "tips_bg":"grey",
+  "tips_bg":"#c0c0c0",
   "tips_fg":"black",
-  "copyright_fg":"white",
-  "min_distance_fg":"yellow"
+  "copyright_fg":"black",
+  "min_distance_fg":"darkblue"
 
 }

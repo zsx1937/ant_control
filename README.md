@@ -22,10 +22,16 @@ config.json
 
 ![](surface.png)
 
-## author
+# telnet.py
+两种调用方法：
+带参数的：telnet.exe commands.txt results.txt 192.168.10.200 4001
+不带参数的：需要配置telnet_config.json文件
+
+
+# author
 
 [lovesatomi.xyz](http://47.100.138.49)，欢迎访问
 
-## reference
+# reference
 
 [https://blog.csdn.net/ahilll/article/details/81531587](https://blog.csdn.net/ahilll/article/details/81531587)

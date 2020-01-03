@@ -85,7 +85,7 @@ def set_port(tn, port, state):
 def set_all_ports(tn, ports_states):
     for i in range(8):
         if set_port(tn, i + 1, 2 - ports_states[i]) == 0:
-            print("set fail")
+            print("Set fail")
             return 0
     print("Set success")
     return 1
@@ -108,7 +108,7 @@ def query_all_ports(tn):
         if resq > -1:
             l.append(resq)
         else:
-            print("query fail")
+            print("Query fail")
             return -1
     # calculate status
     for i in range(8):
@@ -171,12 +171,21 @@ def main(readfile_path, writefile_path, host, port):
 if __name__ == '__main__':
     argv = sys.argv[1:]
     print(sys.argv[0])
-    config = json.load(open("telnet_config.json"))
-    commands_path = config['commands_path']
-    results_path = config['results_path']
-    host_ip = config['host_ip']
-    host_port = config['host_port']
+    
     if len(argv) == 4:
         main(argv[0], argv[1], argv[2], argv[3])
     else:
+        config_json = open("telnet_config.json")
+        try:
+            config = json.load(config_json)
+        except Exception:
+            print("Read config error!")
+            exit()
+        finally:
+            config_json.close()
+
+        commands_path = config['commands_path']
+        results_path = config['results_path']
+        host_ip = config['host_ip']
+        host_port = config['host_port']
         main(commands_path, results_path, host_ip, host_port)
