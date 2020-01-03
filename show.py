@@ -8,6 +8,7 @@ from PIL import Image,ImageTk
 import subprocess
 import os
 import json
+import time
 from win32com.client import Dispatch
 
 ###############################################################################
@@ -61,19 +62,19 @@ def bin2dec(bin_list):
     return res
 
 
-ids = [0,1,2,3,-1,-1,4,5,6]
-nums = [3,2,1,4,5,6,7]
-def ij2id(i, j):
-    #l = [0, 1, 2, 3, -1, 4, 5, 6, 7]
-    global ids
-    return ids[i * 3 + j]
-
 
 # i*3+j           id              num
 # 0  1  2         0  1  2         3  2  1
 # 3  4  5   ->    3         ->    4      
 # 6  7  8         4  5  6         5  6  7
 
+ids = [0,1,2,3,-1,-1,4,-1,-1]
+nums = [3,2,1,4,5]
+
+def ij2id(i, j):
+    #l = [0, 1, 2, 3, -1, 4, 5, 6, 7]
+    global ids
+    return ids[i * 3 + j]
 
 def id2num(id):
     #l = [3, 2, 1, 4, 8, 5, 6, 7]
@@ -84,8 +85,14 @@ def id2num(id):
 ###############################################################################
 # Function connected to windows
 ###############################################################################
+def var_tips_clean():
+    var_tips.set("")
+    window.update_idletasks()
+    time.sleep(0.1)
+
 # Send Button
 def send():
+    var_tips_clean()
     # count status of checkbuttons
     status = [0, 0, 0, 0, 0, 0, 0, 0]
 
@@ -125,14 +132,17 @@ def send():
         else:
             print("Send fail!")
             var_tips.set("Send fail!")
+            return
         print(out)
     else:
         print("Send exe file not exist!")
         var_tips.set("Send exe file not exist!")
+        return
 
 
 # Process Button
 def process():
+    var_tips_clean()
     # read json
     exe_path = config['process_exe_path']
     #paras = []
@@ -141,31 +151,43 @@ def process():
         command = exe_path
         #for para in paras:
         #    command = command + " " + para
-        rc, out = subprocess.getstatusoutput(command)
-        if (rc == 0):
-            var_tips.set("Process success!")
-        else:
-            print("Process fail!")
-            var_tips.set("Process fail!")
-        #print(rc)
-        #print('*' * 10)
-        #print(out)
+        #rc, out = subprocess.getstatusoutput(command)
+        os.system(command)
+        var_tips.set("Process success!")
     else:
         print("Process exe file not exist!")
         var_tips.set("Process exe file not exist!")
+        return
     
 
 
 # Display Button
 def display():
+    var_tips_clean()
     # read json
     results_path = config['display_result_path']
+    if os.path.exists(results_path):
+        pass
+    else:
+        print("Result file not exist!")
+        var_tips.set("Result file not exist!")
+        return
     c = readfile(results_path)
+    if int(c)==-1:
+        print("Classify error!")
+        var_tips.set("Classify error!")
+        return
     status = dec2bin(int(c))
 
     # image display
     global img_width,img_height,display_img
     photo_url = config["display_img_path"]
+    if os.path.exists(photo_url):
+        pass
+    else:
+        print("Image file not exist!")
+        var_tips.set("Image file not exist!")
+        return
     pil_image = Image.open(photo_url)
     pil_image = pil_image.resize((img_width, img_height),Image.ANTIALIAS)
     display_img= ImageTk.PhotoImage(pil_image)
@@ -189,11 +211,12 @@ def display():
     #             var_strings[num].set("1")
     #         else:
     #             var_strings[num].set("0")
-    var_tips.set("display success!")
+    var_tips.set("Display success!")
 
 # M-matrix button
 
 def mmatrix():
+    var_tips_clean()
     # need to use the third library win32com.client
     file_path = config["mmatrix_file_path"]
     if os.path.exists(file_path):
@@ -204,7 +227,13 @@ def mmatrix():
     else:
         print("Mmatrix file not exist!")
         var_tips.set("Mmatrix file not exist!")
+        return
     
+
+# Update time
+def update_time():
+    clock_label.configure(text=time.strftime('%Y-%m-%d %H:%M:%S',time.localtime()))
+    clock_label.after(1000,update_time)
 ###############################################################################
 
 
@@ -213,7 +242,7 @@ def mmatrix():
 ###############################################################################
 window = tk.Tk()
 window.title('SuperView')
-window.geometry('1200x900') 
+window.geometry('1200x950') 
 window['bg'] = config['background_color']
 
 ###############################################################################
@@ -308,7 +337,11 @@ img_width = 450
 img_height = 450
 label_display = tk.Label(window,width=0, height=0,bg=config["background_color"])
 label_display.place(x=x_display, y=y_display,anchor='nw')
-
+photo_url = config["default_img_path"]
+pil_image = Image.open(photo_url)
+pil_image = pil_image.resize((img_width, img_height),Image.ANTIALIAS)
+display_img= ImageTk.PhotoImage(pil_image)
+label_display.configure(image = display_img,width=img_width,height=img_height)
 
 ###############################################################################
 # Discribe txt
@@ -328,19 +361,19 @@ text_discribe.config(state=tk.DISABLED)
 ###############################################################################
 # Position
 start_bx = 50
-start_by = 700
+start_by = 740
 step_bx = 100
 
 b_send = tk.Button(window, text='Send', font=('Arial', 12), width=10, height=1, command=send).place(x=start_bx + step_bx * 0, y=start_by, anchor='nw')
 b_process = tk.Button(window, text='Process', font=('Arial', 12), width=10, height=1, command=process).place(x=start_bx + step_bx * 1, y=start_by, anchor='nw')
 b_display = tk.Button(window, text='Display', font=('Arial', 12), width=10, height=1, command=display).place(x=start_bx + step_bx * 2, y=start_by, anchor='nw')
 b_mmatrix = tk.Button(window, text='M-matrix', font=('Arial', 12), width=10, height=1, command=mmatrix).place(x=start_bx + step_bx * 3, y=start_by, anchor='nw')
-b_quit = tk.Button(window, text='Quit', font=('Arial', 12), width=10, height=1, command=exit).place(x=start_bx + step_bx * 4, y=start_by, anchor='nw')
+#b_quit = tk.Button(window, text='Quit', font=('Arial', 12), width=10, height=1, command=exit).place(x=start_bx + step_bx * 4, y=start_by, anchor='nw')
 ###############################################################################
 # Tips Text
 ###############################################################################
 x_tips = 50
-y_tips = 750
+y_tips = 800
 var_tips = tk.StringVar()
 tk.Label(window, text="Tips: ", bg=config["tips_bg"], fg=config["tips_fg"], font=('Arial', 12), width=5, height=1).place(x=x_tips, y=y_tips,anchor='nw')
 tk.Label(window, textvariable=var_tips, bg=config["tips_bg"], fg=config["tips_fg"], font=('Arial', 12), width=60, height=1,anchor='w').place(x=x_tips + 50, y=y_tips, anchor='nw')
@@ -350,10 +383,48 @@ tk.Label(window, textvariable=var_tips, bg=config["tips_bg"], fg=config["tips_fg
 # Copyright
 ###############################################################################
 x_copyright = 600
-y_copyright = 850
+y_copyright = 900
 tk.Label(window, text="Copyright © 2019 SJTU.All Rights Reserved.", bg=config["background_color"], fg=config["copyright_fg"], font=('Arial', 10), width=50, height=1).place(x=x_copyright, y=y_copyright,anchor='n')
 
 
+###############################################################################
+# Divided line
+###############################################################################
+x_canva_h1 = 345
+y_canva_h1 = 150
+w_canva_h1 = 1
+h_canva_h1 = 300
+canva_h1 = tk.Canvas(window, bg=config['canvas_bg'], width=w_canva_h1, height=h_canva_h1)
+canva_h1.place(x=x_canva_h1, y=y_canva_h1,anchor='n')
+
+
+
+x_canva_h2 = 670
+y_canva_h2 = 150
+w_canva_h2 = 1
+h_canva_h2 = 550
+canva_h2 = tk.Canvas(window, bg=config['canvas_bg'], width=w_canva_h2, height=h_canva_h2)
+canva_h2.place(x=x_canva_h2, y=y_canva_h2,anchor='n')
+
+
+x_canva_v1 = 600
+y_canva_v1 = y_canva_h2 + h_canva_h2
+w_canva_v1 = 1100
+h_canva_v1 = 1
+canva_v1 = tk.Canvas(window, bg=config['canvas_bg'], width=w_canva_v1, height=h_canva_v1)
+canva_v1.place(x=x_canva_v1, y=y_canva_v1,anchor='n')
+
+
+
+###############################################################################
+# Windows loop
+###############################################################################
+
+x_clock = 950
+y_clock = 850
+clock_label = tk.Label(window, text="", bg=config["background_color"], fg=config["clock_fg"], font=('Arial', 11), width=25, height=1)
+clock_label.place(x=x_clock, y=y_clock,anchor='nw')
+update_time()
 
 ###############################################################################
 # Windows loop

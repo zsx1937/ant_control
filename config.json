@@ -1,5 +1,5 @@
 {
-  "send_exe_path": "C:/Users/kaixi/Desktop/super/256classify/dist/telnet/telnet.exe",
+  "send_exe_path": "C:/Users/yuanbin/Desktop/ant_control/dist/telnet/telnet.exe",
   "send_exe_paras": {
       "commands_path": "commands.txt",
       "results_path": "results.txt",
@@ -7,18 +7,19 @@
       "host_port" : "4001"
     },
 
-  "process_exe_path": "notepad",
+  "process_exe_path": "E:/super/final/prog/sampling.exe",
 
-  "display_result_path":"results.txt",
-  "display_img_path":"satomi.jpg",
+  "display_result_path":"E:/super/final/data/result/test_res.txt",
+  "display_img_path":"E:/super/final/data/result/double_star.jpg",
+  "default_img_path":"default_img.jpg",
 
-  "mmatrix_file_path":"C:/Users/kaixi/Desktop/ant_control/demo.xml",
+  "mmatrix_file_path":"E:/super/final/data/post/M_matrix.xlsx",
   
   "illustration_path":"illustration.txt",
 
   "background_color":"#d8e9ec",
-  "title_bg":"#d8e9ec",
-  "title_fg":"blue",
+  "title_bg":"#303030",
+  "title_fg":"white",
   "distribute_title_bg":"#ffd47b",
   "distribute_title_fg":"black",
   "discribe_bg":"#c0c0c0",
@@ -31,6 +32,7 @@
   "tips_bg":"#c0c0c0",
   "tips_fg":"black",
   "copyright_fg":"black",
-  "min_distance_fg":"darkblue"
-
+  "min_distance_fg":"darkblue",
+  "canvas_bg":"black",
+  "clock_fg":"black"
 }
