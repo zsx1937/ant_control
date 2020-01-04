@@ -192,7 +192,8 @@ def display():
     pil_image = pil_image.resize((img_width, img_height),Image.ANTIALIAS)
     display_img= ImageTk.PhotoImage(pil_image)
     label_display.configure(image = display_img,width=img_width,height=img_height)
-
+    pil_image.close()
+    
     #text_display.
     for id in range(len(nums)):
         num = id2num(id)
